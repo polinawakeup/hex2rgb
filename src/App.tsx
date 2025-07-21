@@ -1,34 +1,37 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputValue, setInputValue] = useState<string>('#ffffff');
+  const [color, setColor] = useState<string>('#ffffff');
+  const [info, setInfo] = useState<string>('');
 
+  function hexToRgb (value: string): string {
+    const hex = value.slice(1);
+    const r = parseInt(hex.slice(0, 2), 16).toString();
+    const g = parseInt(hex.slice(2, 4), 16).toString();
+    const b = parseInt(hex.slice(4, 6), 16).toString();
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  const onInputHandle = function (e: React.ChangeEvent<HTMLInputElement>): void {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+
+    if (newValue.length === 7 && /^#[0-9A-Fa-f]{6}$/.test(newValue)) {
+      setColor(newValue);
+      setInfo(hexToRgb(newValue));
+    } else if (newValue.length === 7) {
+      setInfo('Ошибка!');
+      setColor("#BB4242");
+    }
+  }
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={ {backgroundColor: color} } className='container'>
+      <input type="text" value={inputValue} onChange={onInputHandle}/>
+      <div className='info'>{info}</div>
+    </div>
   )
 }
 
